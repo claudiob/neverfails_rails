@@ -15,10 +15,10 @@ Jeweler::Tasks.new do |gem|
   gem.name = "never_fails"
   gem.homepage = "http://github.com/johnmcaliley/never_fails"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
-  gem.email = "john@couponshack.com"
-  gem.authors = ["John McAliley"]
+  gem.summary = %Q{Write cucumber steps that never fail}
+  gem.description = %Q{Cucumber web steps that aim to make your rails scenarios pass automatically by generating code.  60% of the time it works, every time!}
+  gem.email = "john.mcaliley@gmail.com"
+  gem.authors = ["cowboycoded","claudiob"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
   #  gem.add_runtime_dependency 'jabber4r', '> 0.1'

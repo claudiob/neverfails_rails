@@ -1,6 +1,6 @@
 = never_fails
 
-Description goes here.
+Cucumber web steps that aim to make your rails scenarios pass automatically by generating code.  60% of the time it works, every time!
 
 == Contributing to never_fails
  
