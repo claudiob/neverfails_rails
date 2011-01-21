@@ -1,0 +1,15 @@
+source 'http://rubygems.org'
+
+gem 'rails', '3.0.3'
+gem 'sqlite3-ruby', :require => 'sqlite3'
+
+group :development do
+  gem "rspec"
+  gem "rspec-rails"
+  gem 'capybara'
+  gem 'database_cleaner'
+  gem 'cucumber-rails'
+  gem 'cucumber'
+  gem 'spork'
+  gem 'launchy'
+end
