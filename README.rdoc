@@ -1,9 +1,88 @@
 = never_fails
 
+== THIS PROJECT IS CURRENTLY IN RESEARCH AND DESIGN PHASE.  PLEASE COMMENT IN THE ISSUES LIST IF YOU WANT TO CONTRIBUTE
+
 Cucumber web steps that aim to make your rails scenarios pass automatically by generating code.  60% of the time it works, every time!
+
+== DESIGN
+
+Please note that these are just my initial thoughts and this will probably change alot.  Please leave comments and suggestions.
+
+The goal of this experimental repo is to create Rails or Django (claudiob branch) prototype apps from Cucumber steps, essentially creating tests that "never fail"... at least not while you are prototyping your app.  It really sucks doing most of this stuff manually and typing in the generator code after you have already written it in your Cucumber scenarios.  This tool should save you alot of manual work.  Some people think it is stupid to test generated code, but that is not really the point of this.  If you start your development process by writing Cucumber steps then why not reuse them to generate as much code as possible??  Even though the prototype app will be testing generated code, your code will definitely change when you start working on the details.  This method provides you with some solid integration tests that you can use after generating the prototype.   I envision this working in the following manner:
+
+1. Write a Cucumber feature using the default web steps (and maybe a few custom steps)
+2. Provide a mechanism that will analyze each step or the scenario as a whole
+3. Generate code automatically that will pass the step or scenario
+4. Run the scenario automatically and see green (meaning steps 2-4 will happend when you run cucumber on the feature)
+Although the initial version will be highly opinionated, I would like to:
+5. Use a templating system for the generators, so users can customize this to suit their apps.
+6. Allow the default generators to be overriden easily.
+7. On/Off switch.  It is doubtful that you will want to use this after initial prototyping.
+
+In order for some of this to work, the scenario writer will need to write steps in a certain format.  For example, in order to avoid multiple migration files being created, never_fails would need to analyze the entire scenario to see what the user is trying to create and which fields should show up on the page.  This would happen in sequential scenario steps.  For example:
+
+Scenario: Create a new widget
+Given I am on the new widget page
+Then I should see "You are creating a widget" within "header"
+Then I fill in "Name" with "Some Widget"
+And I check "Active"
+And I select "Wigdets Inc" from "Manufacturer"
+And I press "Create that widget!"
+Then I should be on the widgets page
+
+In order for never_fails to generate the appropriate code, it would need to analyze steps 2-4 after it analyzed step 1.  This particular scenario would generate the following:
+
+1. Widget model - with has_many :manufacturers (based on step 5)
+2. Widget migration with fields: name(string),active(boolean),manufacturer_id(integer)
+3. WidgetsController (using Inherited Resource).  It would add code so the create method redirects to the widgets index instead of the default show
+4. new.haml - with "You are creating a widget" within div id=header
+5. _form.haml - creates a Formtastic form with text field for "name", checkbox for "active", a select drop-down for "manufacturer_id", and a button with text "Create that widget!"
+6. index.haml - default index page for widgets
+
+Default web steps and code that would need to be generated if the step fails (Rails specific):
+
+Given I am on the new widgets page
+- Create migration file (The rest of the scenario would need to be analyzed to find fields)
+
+When I press "some button" within "some section"
+- Check if button exists in the form.  Create a formtastic button with appropriate text
+
+When I follow "some link" within "some section"
+- Add a link to the page.  Would need to analyze the next step to generate the url helper
+
+When I fill in "name" with "John" within "some section"
+- Add a text field for "name" in the view.  Add name:string to the migration
+
+When I fill in "John" for "name" within "some section"
+- same as previous
+
+When I select "Widget Inc" from "Manufacturer" within "some section"
+- creates a select box for "Widgets" and creates a field in the migration for "widgets_id" and adds a belongs_to association in the model for widgets. creates a manufacturer model with has_many :widgets (migration?? from another scenario??  This is where it gets tricky.. may have to analyze all scenarios before running the actual tests)
+
+When I check "some checkbox" within "some section"
+- creates the checkbox in the form view.  Adds a boolean field to the migration.  Or possibly a HABTM relationship.  Haven't thought this one through
+
+When I choose "some radio button" within "some section"
+- creates radio box in the form view.  
+
+When I attach the file "some file" to "Upload" within "some section"
+- create file field and add Paperclip fields to migration
+
+Then I should see "some text" within "some section"
+- Add text to a section or div
+
+Then I should be on the widgets page
+- Used to determine redirects and URL helpers from previous steps (button press or follow link)
+
+Custom:
+Then I should see a link named "Anchor Text" within "some section"
+- Add links to the page
+
+
 
 == Contributing to never_fails
  
+* Leave comments in the Wiki or Issues on github if you want to contribute to the design.
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet
 * Check out the issue tracker to make sure someone already hasn't requested it and/or contributed it
 * Fork the project
