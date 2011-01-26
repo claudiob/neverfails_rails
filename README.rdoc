@@ -21,14 +21,15 @@ Although the initial version will be highly opinionated, I would like to:
 
 In order for some of this to work, the scenario writer will need to write steps in a certain format.  For example, in order to avoid multiple migration files being created, never_fails would need to analyze the entire scenario to see what the user is trying to create and which fields should show up on the page.  This would happen in sequential scenario steps.  For example:
 
-Scenario: Create a new widget
-Given I am on the new widget page
-Then I should see "You are creating a widget" within "header"
-Then I fill in "Name" with "Some Widget"
-And I check "Active"
-And I select "Wigdets Inc" from "Manufacturer"
-And I press "Create that widget!"
-Then I should be on the widgets page
+
+    Scenario: Create a new widget
+    Given I am on the new widget page
+    Then I should see "You are creating a widget" within "header"
+    Then I fill in "Name" with "Some Widget"
+    And I check "Active"
+    And I select "Wigdets Inc" from "Manufacturer"
+    And I press "Create that widget!"
+    Then I should be on the widgets page
 
 In order for never_fails to generate the appropriate code, it would need to analyze steps 2-4 after it analyzed step 1.  This particular scenario would generate the following:
 
